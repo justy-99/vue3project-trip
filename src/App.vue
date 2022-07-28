@@ -1,5 +1,5 @@
 <script setup>
-  import tabBar from "@/components/my-tab-bar/tab-bar.vue"
+  import tabBar from "@/components/van-tab-bar/tab-bar.vue"
 
 </script>
 
