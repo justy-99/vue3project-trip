@@ -31,6 +31,7 @@ const cityClick = (city) => {
     <van-index-bar 
     :sticky="true"
     :index-list="indexList"
+    highlight-color="#ff9854"
     >
       <van-index-anchor index="#">热门</van-index-anchor>
       <div class="hotList">

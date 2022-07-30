@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 import useCityStore from '@/stores/modules/city';
 import { storeToRefs } from 'pinia';
+import { formatMonthDay, getDiffDays } from '@/utils/format';
 
 const router = useRouter()
 
@@ -15,9 +16,9 @@ const cityClick = () => {
 
 const positionClick = () => {
   navigator.geolocation.getCurrentPosition(res => {
-    console.log('获取位置成功',res);
+    console.log('获取位置成功',res)
   }, err => {
-    console.log('位置获取失败',err);
+    console.log('位置获取失败',err)
   }, {
     // 配置
     enableHighAccuracy: true,
@@ -26,17 +27,25 @@ const positionClick = () => {
   })
 }
 
-
 // 日期范围
 const nowDate = new Date()
 const newDate = new Date()
 newDate.setDate(nowDate.getDate() + 1)
+const startDate = ref(formatMonthDay(nowDate))
+const endDate = ref(formatMonthDay(newDate))
+const stayCount = ref(getDiffDays(nowDate, newDate))
 
-
+// 日期弹窗标记
 const showCalendar = ref(false)
-
+// 设置日期
 const onConfirm = (value) => {
-  console.log('value',value);
+  console.log('value',value)
+  const selectStart = value[0]
+  const selectEnd = value[1]
+  startDate.value = formatMonthDay(selectStart)
+  endDate.value = formatMonthDay(selectEnd)
+  stayCount.value = getDiffDays(selectStart, selectEnd)
+  // 关闭弹窗
   showCalendar.value = false
 }
 
@@ -57,14 +66,14 @@ const onConfirm = (value) => {
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
-          <span class="time">9月1号</span>
+          <span class="time">{{ startDate }}</span>
         </div>
-        <div class="stay">共1晚</div>
+        <div class="stay">共{{stayCount}}晚</div>
       </div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
-          <span class="time">9月2号</span>
+          <span class="time">{{ endDate }}</span>
         </div>
       </div>
     </div>
@@ -111,21 +120,18 @@ const onConfirm = (value) => {
 .section {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   color: #999;
   height: 44px;
+  overflow: hidden;
 
   .start {
     flex: 1;
     display: flex;
     height: 44px;
     align-items: center;
-  }
-
-  .end {
-    min-width: 30%;
-    padding-left: 20px;
   }
 
   .date {
@@ -147,7 +153,6 @@ const onConfirm = (value) => {
 }
 
 .date-range {
-  height: 44px;
   .stay {
     flex: 1;
     text-align: center;
