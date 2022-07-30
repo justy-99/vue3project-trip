@@ -41,7 +41,7 @@ const cityClick = (city) => {
       <template v-for="(group, index) in groupData.cities" :key="index">
         <van-index-anchor :index="group.group" />
         <template v-for="(city,index) in group.cities" :key="index">
-          <van-cell :title="city.cityName" />
+          <van-cell :title="city.cityName" @click="cityClick(city)"/>
         </template>
       </template>
     </van-index-bar>
