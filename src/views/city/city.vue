@@ -62,6 +62,10 @@ const { allCities } = storeToRefs(cityStore)
 <style lang="less" scoped>
 
 .city{
+  :deep(.van-tabs__wrap){
+    position: relative;
+    z-index: 9;
+  }
   :deep(.city-group) {
     height: calc(100vh - 98px);
     overflow-y: auto;

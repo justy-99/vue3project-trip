@@ -29,7 +29,7 @@ const cityClick = (city) => {
 <template>
   <div class="city-group">
     <van-index-bar 
-    :sticky="false"
+    :sticky="true"
     :index-list="indexList"
     >
       <van-index-anchor index="#">热门</van-index-anchor>
