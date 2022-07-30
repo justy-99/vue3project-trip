@@ -1,6 +1,6 @@
 <script setup>
-  import tabBarItem from "./tab-bar-item.vue"
-  import tabbarData from "@/assets/data/tabbar.js"
+import tabBarItem from "./tab-bar-item.vue"
+import tabbarData from "@/assets/data/tabbar.js"
 </script>
 
 <template>

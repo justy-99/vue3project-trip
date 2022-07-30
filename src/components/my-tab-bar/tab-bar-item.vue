@@ -1,20 +1,20 @@
 <script setup>
-  import { computed } from 'vue'
-  import { useRouter,useRoute } from 'vue-router'
-  import { getAssetURL } from '@/utils/load_assets'
-  
-  const router = useRouter()
-  const route = useRoute()
-  const props = defineProps({
-    itemData: {
-      type: Object,
-      default: ()=>({})
-    }
-  })
-  // 当前item是否处于激活状态
-  let activated = computed(() => route.path.indexOf(props.itemData.path) !== -1)
-  // 点击切换路由 
-  const clickTab = (path) => router.push(path)
+import { computed } from 'vue'
+import { useRouter,useRoute } from 'vue-router'
+import { getAssetURL } from '@/utils/load_assets'
+
+const router = useRouter()
+const route = useRoute()
+const props = defineProps({
+  itemData: {
+    type: Object,
+    default: ()=>({})
+  }
+})
+// 当前item是否处于激活状态
+let activated = computed(() => route.path.indexOf(props.itemData.path) !== -1)
+// 点击切换路由 
+const clickTab = (path) => router.push(path)
 </script>
 
 <template>

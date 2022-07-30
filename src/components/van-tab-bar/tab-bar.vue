@@ -1,13 +1,13 @@
 <script setup>
-  import { ref, computed } from 'vue'
-  import { useRoute } from 'vue-router';
-  import tabbarData from '@/assets/data/tabbar.js'
-  import { getAssetURL } from '@/utils/load_assets'
-  
-  const route = useRoute()
-  const active = computed(() => {
-    return tabbarData.findIndex((item) => route.path.includes(item.path))
-  })
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router';
+import tabbarData from '@/assets/data/tabbar.js'
+import { getAssetURL } from '@/utils/load_assets'
+
+const route = useRoute()
+const active = computed(() => {
+  return tabbarData.findIndex((item) => route.path.includes(item.path))
+})
 
 
 </script>
