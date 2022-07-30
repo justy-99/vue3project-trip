@@ -1,7 +1,7 @@
 import request from "../request";
 
-const CITYAllURL = `/city/all`
+const allCityURL = `/city/all`
 
-export function getCityAll() {
-  return request.get(CITYAllURL)
+export function getCityAll(data) {
+  return request.get(allCityURL)
 }

@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 import { BASE_URL, TIMEOUT } from './config'
 
 class HttpRequest {
@@ -56,6 +55,25 @@ class HttpRequest {
     return this.request(options)
   }
 
+  delete(url, data, config) {
+    const options = {
+      method: 'delete',
+      url,
+      data,
+      ...config
+    }
+    return this.request(options)
+  }
+
+  patch(url, data, config) {
+    const options = {
+      method: 'patch',
+      url,
+      data,
+      ...config
+    }
+    return this.request(options)
+  }
 }
 
 export default new HttpRequest(BASE_URL,TIMEOUT)

@@ -40,6 +40,7 @@ const { allCities } = storeToRefs(cityStore)
       <van-tabs 
         v-model:active="tabActive" 
         color="#ff9854"
+        line-height="3"
       >
         <template v-for="(value,key,index) in allCities" :key="index">
           <van-tab 
