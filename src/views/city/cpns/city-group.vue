@@ -37,6 +37,9 @@ const cityClick = (city) => {
         <template v-for="(city, index) in groupData.hotCities" :key="index">
           <div class="city" @click="cityClick(city)">{{city.cityName}}</div>
         </template>
+        <!-- flex布局填充 -->
+        <i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i>
       </div>
       <template v-for="(group, index) in groupData.cities" :key="index">
         <van-index-anchor :index="group.group" />
@@ -67,6 +70,9 @@ const cityClick = (city) => {
     line-height: 28px;
     background-color: #fff4ec;
     margin: 6px 0;
+  }
+  i {
+    width:70px;
   }
 }
 </style>
