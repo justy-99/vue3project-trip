@@ -19,6 +19,7 @@ const tabActive = ref()
 // 从store获取数据
 const cityStore = useCityStore()
 cityStore.fetchAllCitiesData()
+
 const { allCities } = storeToRefs(cityStore)
 
 </script>

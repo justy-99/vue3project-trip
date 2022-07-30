@@ -5,6 +5,7 @@ import tabbarData from '@/assets/data/tabbar.js'
 import { getAssetURL } from '@/utils/load_assets'
 
 const route = useRoute()
+const currentIndex = ref()
 const active = computed(() => {
   return tabbarData.findIndex((item) => route.path.includes(item.path))
 })
@@ -14,7 +15,7 @@ const active = computed(() => {
 
 <template>
   <div class="tab-bar">
-    <van-tabbar route v-model="active" active-color="#ff9854">
+    <van-tabbar route v-model="currentIndex" active-color="#ff9854">
       <template v-for="(item,index) in tabbarData">
         <van-tabbar-item :to="item.path">
           <template #icon>
