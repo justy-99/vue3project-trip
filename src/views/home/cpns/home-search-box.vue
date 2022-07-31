@@ -2,10 +2,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { Toast } from 'vant'
 import useCityStore from '@/stores/modules/city';
 import useHomeStore from '@/stores/modules/home'
 import { formatMonthDay, getDiffDays } from '@/utils/format';
-import qqgeolocation from '@/utils/location'
+import getlocation from '@/utils/location'
 
 const router = useRouter()
 
@@ -18,12 +19,13 @@ const cityClick = () => {
 
 const positionClick = async () => {
   // 腾讯位置服务
-  const qqlocation = await qqgeolocation()
+  const qqlocation = await getlocation()
   qqlocation.getIpLocation((res)=>{
     const myLocation = res?.city.replace('市','')
     currentCity.value.cityName = myLocation
+    Toast.success(`定位成功:${res?.city}`);
   },(err)=>{
-    console.log('位置获取失败',err);
+    Toast.fail('定位失败，请重试或手动切换');
   })
   // 浏览器原生
   // navigator.geolocation.getCurrentPosition(res => {
@@ -108,7 +110,7 @@ const { hotSuggests } = storeToRefs(homeStore)
       type="range" 
       color="#ff9854"
       :formatter="formatCalendar"
-      :show-confirm="false"
+      :show-confirm="true"
       @confirm="onConfirm" 
     />
     <!-- 筛选条件 -->
