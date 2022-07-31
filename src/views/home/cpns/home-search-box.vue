@@ -37,6 +37,15 @@ const stayCount = ref(getDiffDays(nowDate, newDate))
 
 // 日期弹窗标记
 const showCalendar = ref(false)
+// 日历选择器样式
+const formatCalendar = (day) => {
+  if (day.type === 'start') {
+    day.bottomInfo = '入住';
+  } else if (day.type === 'end') {
+    day.bottomInfo = '离店';
+  }
+  return day
+}
 // 设置日期
 const onConfirm = (value) => {
   console.log('value',value)
@@ -68,8 +77,8 @@ const onConfirm = (value) => {
           <span class="tip">入住</span>
           <span class="time">{{ startDate }}</span>
         </div>
-        <div class="stay">共{{stayCount}}晚</div>
       </div>
+      <div class="stay">共{{stayCount}}晚</div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
@@ -77,7 +86,14 @@ const onConfirm = (value) => {
         </div>
       </div>
     </div>
-    <van-calendar v-model:show="showCalendar" :round="false" type="range" @confirm="onConfirm" />
+    <van-calendar
+      v-model:show="showCalendar" 
+      :round="true" 
+      type="range" 
+      color="#ff9854"
+      :formatter="formatCalendar"
+      @confirm="onConfirm" 
+    />
     <div class="section bottom-gray-line"></div>
     <div class="section bottom-gray-line"></div>
 
@@ -85,9 +101,9 @@ const onConfirm = (value) => {
 </template>
 
 <style lang="less" scoped>
-.search-box {
-  --van-calendar-popup-height: 100%;
-}
+// .search-box {
+//   --van-calendar-popup-height: 100%;
+// }
 
 .location {
   .city {
@@ -128,7 +144,7 @@ const onConfirm = (value) => {
   overflow: hidden;
 
   .start {
-    flex: 1;
+    // flex: 1;
     display: flex;
     height: 44px;
     align-items: center;
@@ -152,14 +168,14 @@ const onConfirm = (value) => {
   }
 }
 
-.date-range {
-  .stay {
-    flex: 1;
-    text-align: center;
-    font-size: 12px;
-    color: #666;
-  }
-}
+// .date-range {
+//   .stay {
+//     flex: 1;
+//     text-align: center;
+//     font-size: 12px;
+//     color: #666;
+//   }
+// }
 
 .price-counter {
   .start {
