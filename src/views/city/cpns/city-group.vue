@@ -22,7 +22,7 @@ const cityStore = useCityStore()
 const router = useRouter()
 const cityClick = (city) => {
   cityStore.currentCity = city
-  router.push('/home')
+  router.back()
 }
 </script>
 
@@ -54,6 +54,14 @@ const cityClick = (city) => {
 
 
 <style lang="less" scoped>
+.city-group {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  :deep(.van-index-anchor--sticky) {
+    top: -1px;
+  }
+}
 .hotList {
   display: flex;
   flex-wrap: wrap;

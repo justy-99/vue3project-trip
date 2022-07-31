@@ -46,7 +46,7 @@ const { categories } = storeToRefs(homeStore)
 
     .text {
       font-size: 12px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
   }
 }
