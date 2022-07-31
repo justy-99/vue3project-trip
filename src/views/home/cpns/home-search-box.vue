@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
-import useCityStore from '@/stores/modules/city';
 import { storeToRefs } from 'pinia';
+import useCityStore from '@/stores/modules/city';
+import useHomeStore from '@/stores/modules/home'
 import { formatMonthDay, getDiffDays } from '@/utils/format';
+import qqgeolocation from '@/utils/location'
 
 const router = useRouter()
 
@@ -14,17 +16,26 @@ const cityClick = () => {
   router.push('/city')
 }
 
-const positionClick = () => {
-  navigator.geolocation.getCurrentPosition(res => {
-    console.log('获取位置成功',res)
-  }, err => {
-    console.log('位置获取失败',err)
-  }, {
-    // 配置
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0
+const positionClick = async () => {
+  // 腾讯位置服务
+  const qqlocation = await qqgeolocation()
+  qqlocation.getIpLocation((res)=>{
+    const myLocation = res?.city.replace('市','')
+    currentCity.value.cityName = myLocation
+  },(err)=>{
+    console.log('位置获取失败',err);
   })
+  // 浏览器原生
+  // navigator.geolocation.getCurrentPosition(res => {
+  //   console.log('navigator.geolocation获取位置成功',res.coords)
+  // }, err => {
+  //   console.log('位置获取失败',err)
+  // }, {
+  //   // 配置
+  //   enableHighAccuracy: true,
+  //   timeout: 10000,
+  //   maximumAge: 0
+  // })
 }
 
 // 日期范围
@@ -48,7 +59,6 @@ const formatCalendar = (day) => {
 }
 // 设置日期
 const onConfirm = (value) => {
-  console.log('value',value)
   const selectStart = value[0]
   const selectEnd = value[1]
   startDate.value = formatMonthDay(selectStart)
@@ -58,20 +68,26 @@ const onConfirm = (value) => {
   showCalendar.value = false
 }
 
+// 搜索建议
+const homeStore = useHomeStore()
+homeStore.fetchHotSuggestData()
+const { hotSuggests } = storeToRefs(homeStore)
+
+
 </script>
 
 <template>
   <div class="search-box">
     <!-- 位置信息 -->
-    <div class="section location bottom-gray-line">
+    <section class="section location bottom-gray-line">
       <div class="city" @click="cityClick">{{currentCity.cityName}}</div>
       <div class="position" @click="positionClick">
-        <span class="text">杭州</span>
         <img src="@/assets/img/home/icon_location.png" alt="">
+        <span class="text">当前位置</span>
       </div>
-    </div>
-
-    <div class="section date-range bottom-gray-line" @click="showCalendar = true">
+    </section>
+    <!-- 日期选择 -->
+    <section class="section date-range bottom-gray-line" @click="showCalendar = true">
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
@@ -85,18 +101,37 @@ const onConfirm = (value) => {
           <span class="time">{{ endDate }}</span>
         </div>
       </div>
-    </div>
+    </section>
     <van-calendar
       v-model:show="showCalendar" 
       :round="true" 
       type="range" 
       color="#ff9854"
       :formatter="formatCalendar"
+      :show-confirm="false"
       @confirm="onConfirm" 
     />
-    <div class="section bottom-gray-line"></div>
-    <div class="section bottom-gray-line"></div>
-
+    <!-- 筛选条件 -->
+    <section class="section bottom-gray-line price-counter">
+      <div class="start">价格不限</div>
+      <i class="center-line"></i>
+      <div class="end">人数不限</div>
+    </section>
+    <section class="section">
+      关键字/位置/品牌/民宿名
+    </section>
+    <!-- 搜索建议 -->
+    <section class="section hot-suggests">
+      <template v-for="(item,index) in hotSuggests" :key="index">
+        <div class="item">
+          {{item.tagText.text}}
+        </div>
+      </template>
+    </section>
+    <!-- 搜索按钮 -->
+    <section class="section searchBtn">
+      <van-button round color="#ff9854" block>开始搜索</van-button>
+    </section>
   </div>
 </template>
 
@@ -108,14 +143,13 @@ const onConfirm = (value) => {
 .location {
   .city {
     flex: 1;
-    color: #333;
-    font-size: 15px;
+    color: #ff9854;
+    font-size: 16px;
+    font-weight: 600;
   }
 
   .position {
-    width: 108px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     
     .text {
@@ -123,10 +157,10 @@ const onConfirm = (value) => {
       top: 1px;
       color: #666;
       font-size: 12px;
+      padding-left: 5px;
     }
 
     img {
-      margin-left: 5px;
       width: 18px;
       height: 18px;
     }
@@ -138,25 +172,23 @@ const onConfirm = (value) => {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 2px 20px;
   color: #999;
   height: 44px;
-  overflow: hidden;
 
   .start {
-    // flex: 1;
     display: flex;
-    height: 44px;
     align-items: center;
   }
 
+}
+.date-range {
   .date {
     display: flex;
     flex-direction: column;
 
     .tip {
       font-size: 12px;
-      color: #999;
     }
 
     .time {
@@ -166,33 +198,35 @@ const onConfirm = (value) => {
       font-weight: 500;
     }
   }
-}
-
-// .date-range {
-//   .stay {
-//     flex: 1;
-//     text-align: center;
-//     font-size: 12px;
-//     color: #666;
-//   }
-// }
-
-.price-counter {
-  .start {
-    border-right: 1px solid  var(--line-color);
+  .stay {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
   }
 }
 
 .hot-suggests {
-  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  color: #333;
+  height: 100%;
 
   .item {
-    padding: 4px 8px;
-    margin: 4px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 8px;
+    margin: 8px 8px 0 0;
     border-radius: 14px;
     font-size: 12px;
-    line-height: 1;
+    background-color: #f5f5f5;
   }
+}
+
+.searchBtn{
+  margin: 10px 0;
+  --van-button-normal-font-size:18px;
 }
 
 </style>

@@ -30,7 +30,7 @@ const { allCities } = storeToRefs(cityStore)
       <!-- 搜索框 -->
       <van-search 
         v-model="searchValue" 
-        placeholder="城市/区域/关键词"
+        placeholder="城市/区域"
         shape="round"
         show-action
         @cancel="onCancel"
