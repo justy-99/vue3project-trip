@@ -6,16 +6,16 @@ const APPNAME = '地图学习'
 
 const getLoaction = () => {
   return new Promise((resolve, reject) => {
-    if(!window.qq) {
+    if(window.qq) {
+      const qqgeolocation = new qq.maps.Geolocation(KEY, APPNAME);
+      resolve(qqgeolocation)
+    } else {
       laodJs(qqmapapi).then(function () {
         const qqgeolocation = new qq.maps.Geolocation(KEY, APPNAME);
         resolve(qqgeolocation)
       }).catch((err) => {
         reject(err)
       })
-    } else {
-      const qqgeolocation = new qq.maps.Geolocation(KEY, APPNAME);
-      resolve(qqgeolocation)
     }
   })
 }

@@ -6,7 +6,7 @@ import { Toast } from 'vant'
 import useCityStore from '@/stores/modules/city';
 import useHomeStore from '@/stores/modules/home'
 import { formatMonthDay, getDiffDays } from '@/utils/format';
-import getlocation from '@/utils/location'
+import getLoaction from '@/utils/location'
 
 const router = useRouter()
 
@@ -16,10 +16,9 @@ const { currentCity } = storeToRefs(cityStore)
 const cityClick = () => {
   router.push('/city')
 }
-
 const positionClick = async () => {
   // 腾讯位置服务
-  const qqlocation = await getlocation()
+  const qqlocation = await getLoaction()
   qqlocation.getIpLocation((res)=>{
     const myLocation = res?.city.replace('市','')
     currentCity.value.cityName = myLocation
