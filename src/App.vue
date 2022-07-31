@@ -1,5 +1,8 @@
 <script setup>
-  import tabBar from "@/components/van-tab-bar/tab-bar.vue"
+import tabBar from "@/components/van-tab-bar/tab-bar.vue"
+import { useRoute } from "vue-router";
+
+const route = useRoute()
 
 </script>
 
@@ -13,7 +16,7 @@
         />
       </keep-alive>
     </router-view>
-    <tab-bar/>
+    <tab-bar v-if="!route.meta.hideTabBar"/>
   </div>
 </template>
 

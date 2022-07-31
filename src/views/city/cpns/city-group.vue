@@ -22,7 +22,7 @@ const cityStore = useCityStore()
 const router = useRouter()
 const cityClick = (city) => {
   cityStore.currentCity = city
-  router.back()
+  router.push('/home')
 }
 </script>
 

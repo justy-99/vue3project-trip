@@ -1,10 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { Toast } from 'vant'
 import useCityStore from '@/stores/modules/city';
 import useHomeStore from '@/stores/modules/home'
+import useMainStore from '@/stores/modules/main'
 import { formatMonthDay, getDiffDays } from '@/utils/format';
 import getLoaction from '@/utils/location'
 
@@ -40,14 +41,13 @@ const positionClick = async () => {
 }
 
 // 日期范围
-const nowDate = new Date()
-const newDate = new Date()
-newDate.setDate(nowDate.getDate() + 1)
-const startDate = ref(formatMonthDay(nowDate))
-const endDate = ref(formatMonthDay(newDate))
-const stayCount = ref(getDiffDays(nowDate, newDate))
+const mainStore = useMainStore()
+const { startDate, endDate } = storeToRefs(mainStore)
 
-// 日期弹窗标记
+const startDateStr = computed(() => formatMonthDay(startDate.value))
+const endDateStr = computed(() => formatMonthDay(endDate.value))
+const stayCount = computed(() => getDiffDays(startDate.value, endDate.value))
+// 日期弹窗标识
 const showCalendar = ref(false)
 // 日历选择器样式
 const formatCalendar = (day) => {
@@ -60,20 +60,27 @@ const formatCalendar = (day) => {
 }
 // 设置日期
 const onConfirm = (value) => {
-  const selectStart = value[0]
-  const selectEnd = value[1]
-  startDate.value = formatMonthDay(selectStart)
-  endDate.value = formatMonthDay(selectEnd)
-  stayCount.value = getDiffDays(selectStart, selectEnd)
+  mainStore.startDate = value[0]
+  mainStore.endDate = value[1]
   // 关闭弹窗
   showCalendar.value = false
 }
 
 // 搜索建议
 const homeStore = useHomeStore()
-homeStore.fetchHotSuggestData()
 const { hotSuggests } = storeToRefs(homeStore)
 
+// 开始搜索
+const searchBtnClick = () => {
+  router.push({
+    path: "/search",
+    query: {
+      startDate: startDate.value,
+      endDate: endDate.value,
+      currentCity: currentCity.value.cityName
+    }
+  })
+}
 
 </script>
 
@@ -92,14 +99,14 @@ const { hotSuggests } = storeToRefs(homeStore)
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
-          <span class="time">{{ startDate }}</span>
+          <span class="time">{{ startDateStr }}</span>
         </div>
       </div>
       <div class="stay">共{{stayCount}}晚</div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
-          <span class="time">{{ endDate }}</span>
+          <span class="time">{{ endDateStr }}</span>
         </div>
       </div>
     </section>
@@ -131,7 +138,7 @@ const { hotSuggests } = storeToRefs(homeStore)
     </section>
     <!-- 搜索按钮 -->
     <section class="section searchBtn">
-      <van-button round color="#ff9854" block>开始搜索</van-button>
+      <van-button round block @click="searchBtnClick">开始搜索</van-button>
     </section>
   </div>
 </template>
@@ -228,6 +235,8 @@ const { hotSuggests } = storeToRefs(homeStore)
 .searchBtn{
   margin: 10px 0;
   --van-button-normal-font-size:18px;
+  --van-button-default-background-color:var(--theme-linear-gradient);
+  --van-button-default-color:#fff;
 }
 
 </style>
