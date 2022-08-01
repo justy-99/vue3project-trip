@@ -132,7 +132,7 @@ const searchBtnClick = () => {
     <section class="section hot-suggests">
       <template v-for="(item,index) in hotSuggests" :key="index">
         <div class="item">
-          {{item.tagText.text}}
+          {{item.tagText?.text}}
         </div>
       </template>
     </section>
