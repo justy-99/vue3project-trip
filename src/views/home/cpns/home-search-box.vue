@@ -5,8 +5,8 @@ import { storeToRefs } from 'pinia';
 import { Toast } from 'vant'
 import useCityStore from '@/stores/modules/city';
 import useHomeStore from '@/stores/modules/home'
-import useMainStore from '@/stores/modules/main'
-import { formatMonthDay, getDiffDays } from '@/utils/format';
+import useDate from '@/hooks/useDate'
+import { formatMonthDay } from '@/utils/format';
 import getLoaction from '@/utils/location'
 
 const router = useRouter()
@@ -41,31 +41,18 @@ const positionClick = async () => {
 }
 
 // 日期范围
-const mainStore = useMainStore()
-const { startDate, endDate } = storeToRefs(mainStore)
-
+const { startDate, endDate, stayCount, formatCalendar } = useDate()
 const startDateStr = computed(() => formatMonthDay(startDate.value))
 const endDateStr = computed(() => formatMonthDay(endDate.value))
-const stayCount = computed(() => getDiffDays(startDate.value, endDate.value))
 // 日期弹窗标识
 const showCalendar = ref(false)
-// 日历选择器样式
-const formatCalendar = (day) => {
-  if (day.type === 'start') {
-    day.bottomInfo = '入住';
-  } else if (day.type === 'end') {
-    day.bottomInfo = '离店';
-  }
-  return day
-}
-// 设置日期
+  // 设置日期
 const onConfirm = (value) => {
-  mainStore.startDate = value[0]
-  mainStore.endDate = value[1]
+  startDate.value = value[0]
+  endDate.value = value[1]
   // 关闭弹窗
   showCalendar.value = false
 }
-
 // 搜索建议
 const homeStore = useHomeStore()
 const { hotSuggests } = storeToRefs(homeStore)

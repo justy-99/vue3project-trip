@@ -1,5 +1,5 @@
 import { _throttle } from '@/utils/tools'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue'
 
 export default function useScroll() {
   const isReachBottom = ref(false)
@@ -18,10 +18,18 @@ export default function useScroll() {
       isReachBottom.value = true
     }
 
-  }, 100)
+  }, 50)
   
   onMounted(() => {
     window.addEventListener("scroll", scrollListenerHandler)
+  })
+
+  onActivated(() => {
+    window.addEventListener("scroll", scrollListenerHandler)
+  })
+
+  onDeactivated(() => {
+    window.removeEventListener("scroll", scrollListenerHandler)
   })
 
   onUnmounted(() => {
