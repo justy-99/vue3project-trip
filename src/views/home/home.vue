@@ -29,9 +29,8 @@ watch( isReachBottom, (newValue) => {
 })
 
 const isShowSearchBar = computed(() => {
-  return scrollTop.value >= 400
+  return scrollTop.value >= 480
 })
-
 
 </script>
 
@@ -66,7 +65,7 @@ const isShowSearchBar = computed(() => {
   left: 0;
   right: 0;
   height: 45px;
-  padding: 16px 16px 10px;
+  padding: 10px 13px 10px;
   background-color: #fff;
 }
 

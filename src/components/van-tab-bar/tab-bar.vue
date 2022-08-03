@@ -1,15 +1,20 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router';
 import tabbarData from '@/assets/data/tabbar.js'
 import { getAssetURL } from '@/utils/load_assets'
 
 const route = useRoute()
 const currentIndex = ref()
-const active = computed(() => {
-  return tabbarData.findIndex((item) => route.path.includes(item.path))
-})
+// const active = computed(() => {
+//   return tabbarData.findIndex((item) => route.path.includes(item.path))
+// })
 
+watch(route, (newRoute) => {
+  const index = tabbarData.findIndex(item => item.path === newRoute.path)
+  if (index === -1) return
+  currentIndex.value = index
+})
 
 </script>
 
@@ -19,7 +24,7 @@ const active = computed(() => {
       <template v-for="(item,index) in tabbarData">
         <van-tabbar-item :to="item.path">
           <template #icon>
-            <img v-if="active === index" :src="getAssetURL(item.avtiveImg)" alt="">
+            <img v-if="currentIndex === index" :src="getAssetURL(item.avtiveImg)" alt="">
             <img v-else :src="getAssetURL(item.img)"  alt="">
           </template>
           <template #default>

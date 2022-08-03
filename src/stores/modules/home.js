@@ -3,11 +3,11 @@ import { defineStore } from "pinia";
 
 const useHomeStore = defineStore('homeStore',{
   state: () => ({
-    hotSuggests: [],
-    categories: [],
+    hotSuggests: [], //搜索建议
+    categories: [], //分类
 
     currentPage: '1',
-    houselist:[]
+    houselist:[]  //首页房源列表
   }),
   actions: {
     async fetchHotSuggestData() {
