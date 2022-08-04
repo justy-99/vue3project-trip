@@ -82,6 +82,7 @@ const onConfirm = (value) => {
   .select-time {
     display: flex;
     flex-direction: column;
+    padding-right: 4px;
 
     .item {
       display: flex;
