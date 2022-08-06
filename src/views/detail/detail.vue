@@ -39,7 +39,7 @@ const showTabControl = computed(() => {
   // if(swipe.value) {
   //   return scrollTop.value > swipe.value.$el.offsetHeight
   // }
-  return scrollTop.value >= 262
+  return scrollTop.value >= 250
 })
 const sectionEls = ref({})
 const names = computed(() => {
@@ -59,7 +59,7 @@ const tabClick = (index) => {
   const key = Object.keys(sectionEls.value)[index]
   const el = sectionEls.value[key]
   let distance = el.offsetTop
-  distance = distance - 44
+  distance = distance - 39
 
   isClick = true
   currentDistance = distance
@@ -143,7 +143,7 @@ watch(scrollTop, (newValue) => {
 // }
 .tabs{
   position: fixed;
-  z-index: 9;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;

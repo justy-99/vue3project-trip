@@ -83,7 +83,7 @@ defineProps({
 
         .text {
           position: relative;
-          z-index: 9;
+          z-index: 8;
           font-size: 48px;
         }
 
