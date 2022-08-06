@@ -94,11 +94,12 @@ defineProps({
     }
 
     .right {
+      min-width: 64px;
       .contact {
         height: 24px;
         line-height: 24px;
         border-radius: 5px;
-        padding: 0 12px;
+        padding: 0 8px;
         font-size: 12px;
         color: #fff;
         background-image: linear-gradient(90deg,#fa8c1d,#fcaf3f);
