@@ -1,7 +1,7 @@
 import { _throttle } from '@/utils/tools'
 import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue'
 
-export default function useScroll(elRef) {
+export default function useScroll(elRef, time = 50) {
   let el = window
 
   const isReachBottom = ref(false)
@@ -26,7 +26,7 @@ export default function useScroll(elRef) {
       isReachBottom.value = true
     }
 
-  }, 50)
+  }, time)
   
   onMounted(() => {
     if (elRef) el = elRef.value

@@ -24,7 +24,7 @@ onMounted(() => {
 <template>
   <div class="home">
     <detail-section title="位置周边" more-text="查看更多周边信息">
-      <div class="baidu" ref="mapRef"></div>
+      <div class="baidu" ref="mapRef" ></div>
     </detail-section>
   </div>
 </template>

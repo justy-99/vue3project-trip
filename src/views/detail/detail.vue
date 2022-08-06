@@ -33,37 +33,32 @@ getDetailInfos({ houseId }).then((res) => {
 // tabControl相关的操作
 const detailRef = ref()
 const swipe = ref()
-const { scrollTop } = useScroll(detailRef)
-// 展示tabcontrol
+const { scrollTop } = useScroll(detailRef,10)
+// 展示tabcontrol  tabcontrol和navbar的高度差为2(当前)
 const showTabControl = computed(() => {
-  // if(swipe.value) {
-  //   return scrollTop.value > swipe.value.$el.offsetHeight
-  // }
-  return scrollTop.value >= 250
+  if(swipe.value && swipe.value.$el.offsetHeight > 0) {
+    return scrollTop.value > (swipe.value.$el.offsetHeight + 2)
+  }
+  return scrollTop.value >= 254
 })
+// 存放各个组件映射
 const sectionEls = ref({})
 const names = computed(() => {
   return Object.keys(sectionEls.value)
 })
-// 函数模板引用
+// 为sectionEls赋值 （函数模板引用 加载和卸载都会执行）
 const getSectionRef = (value) => {
   if (!value) return
   const name = value.$el.getAttribute("name")
   sectionEls.value[name] = value.$el
 }
 
-let isClick = false
-let currentDistance = -1
-// 点击顶部item，滑动到对应高度  44是tabcontrol的高度
+// 点击顶部item，滑动到对应高度  44是tabcontrol的高度 5是上边框高度
 const tabClick = (index) => {
   const key = Object.keys(sectionEls.value)[index]
   const el = sectionEls.value[key]
-  let distance = el.offsetTop
-  distance = distance - 39
-
-  isClick = true
-  currentDistance = distance
-
+  let distance = el.offsetTop - 44 + 5
+  
   detailRef.value.scrollTo({
     top: distance,
     behavior: "smooth"
@@ -73,25 +68,19 @@ const tabClick = (index) => {
 // 页面滚动, 滚动时匹配对应的tabControl的index
 const tabControlRef = ref()
 watch(scrollTop, (newValue) => {
-  if (newValue === currentDistance) {
-    isClick = false
-  }
-  if (isClick) return
-
   // 1.获取所有的区域的offsetTops
   const els = Object.values(sectionEls.value)
   const values = els.map(el => el.offsetTop)
 
   // 2.根据newValue去匹配想要索引
-  let index = values.length - 1
+  let index = 0
+  // 从前往后查找，newval需要小于目标item的最底部，
+  // 匹配到的都是选中的往后一项，需要索引减一
   index = values.findIndex( item => newValue <= (item - 44)) - 1
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] > newValue + 44) {
-  //     index = i - 1
-  //     break
-  //   }
-  // }
-  // console.log(index)
+  //最后一项没有后一项，会未匹配到，就是 -1 -1为-2
+  if(index === -2) index = values.length-1 
+  //第一项默认选中
+  if(index < 0) index = 0   
   tabControlRef.value?.setCurrentIndex(index)
 })
 
