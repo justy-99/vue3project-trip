@@ -1,4 +1,5 @@
 <script>
+//如使用 <script setup> 需要通过 defineExpose({}) 宏显式暴露
   export default {
     props: {
       titles: {

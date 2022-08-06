@@ -36,10 +36,10 @@ const swipe = ref()
 const { scrollTop } = useScroll(detailRef)
 // 展示tabcontrol
 const showTabControl = computed(() => {
-  if(swipe.value) {
-    return scrollTop.value > swipe.value.$el.offsetHeight
-  }
-  return scrollTop.value >= 260
+  // if(swipe.value) {
+  //   return scrollTop.value > swipe.value.$el.offsetHeight
+  // }
+  return scrollTop.value >= 262
 })
 const sectionEls = ref({})
 const names = computed(() => {
@@ -84,7 +84,7 @@ watch(scrollTop, (newValue) => {
 
   // 2.根据newValue去匹配想要索引
   let index = values.length - 1
-  index = values.findIndex( item =>  item > newValue + 44) - 1
+  index = values.findIndex( item => newValue <= (item - 44)) - 1
   // for (let i = 0; i < values.length; i++) {
   //   if (values[i] > newValue + 44) {
   //     index = i - 1
