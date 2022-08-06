@@ -3,9 +3,9 @@ import { watch, computed } from 'vue';
 // components
 import HomeNavBar from './cpns/home-nav-bar.vue'
 import HomeSearchBox from './cpns/home-search-box.vue'
-import homeCategories from './cpns/home-categories.vue';
+import HomeCategories from './cpns/home-categories.vue';
 import HomeContent from './cpns/home-content.vue'
-import searchBar from '@/components/search-bar/search-bar.vue'
+import SearchBar from '@/components/search-bar/search-bar.vue'
 // hook
 import useScroll from '@/hooks/useScroll';
 // store
@@ -43,7 +43,7 @@ const isShowSearchBar = computed(() => {
     <home-search-box />
     <home-categories />
     <div class="search-bar" v-if="isShowSearchBar">
-      <searchBar></searchBar>
+      <search-bar></search-bar>
     </div>
     <home-content />
   </div>

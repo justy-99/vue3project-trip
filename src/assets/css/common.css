@@ -13,6 +13,10 @@
 
 }
 
+/* * {
+  touch-action: none;
+} */
+
 body {
   font-size: 14px;
   font-family: Circular, "PingFang-SC";
@@ -36,4 +40,11 @@ body {
   display: inline-block;
   height: 100%;
   border-right: 1px solid  var(--line-color);
+}
+
+.icon_check {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: url(../img/detail/icon_check.png) 0 0 / 100% 100%;
 }

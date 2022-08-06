@@ -10,6 +10,6 @@ export default (src) => {
       reject()
     }
     script.src = src
-    document.getElementsByTagName('body')[0].appendChild(script)
+    document.body.appendChild(script)
   })
 }
