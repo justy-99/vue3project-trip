@@ -112,7 +112,7 @@ const searchBtnClick = () => {
       <i class="center-line"></i>
       <div class="end">人数不限</div>
     </section>
-    <section class="section">
+    <section class="section bottom-gray-line">
       关键字/位置/品牌/民宿名
     </section>
     <!-- 搜索建议 -->
