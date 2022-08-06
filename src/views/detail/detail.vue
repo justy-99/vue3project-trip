@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 // components
+import TabControl from "@/components/tab-control/tab-control.vue"
 import DetailSwipe from './cpns/detail_01-swipe.vue'
 import DetailInfos from './cpns/detail_02-infos.vue'
 import DetailFacility from './cpns/detail_03-facility.vue'
@@ -10,7 +11,9 @@ import DetailComment from "./cpns/detail_05-comment.vue"
 import DetailNotice from './cpns/detail_06-notice.vue'
 import DetailMap from "./cpns/detail_07-map.vue"
 import DetailIntro from "./cpns/detail_08-intro.vue"
-
+// hook
+import useScroll from '@/hooks/useScroll'
+// service
 import { getDetailInfos } from '@/service/modules/detail.js';
 
 const router = useRouter()
@@ -19,20 +22,90 @@ const route = useRoute()
 const onClickLeft = () => {
   router.back()
 }
-
+// 根据houseId获取数据
 const houseId = route.params.id
-
 const detailInfos = ref({})
 const mainPart = computed(() => detailInfos.value.mainPart )
 getDetailInfos({ houseId }).then((res) => {
   detailInfos.value = res.data  
 })
 
+// tabControl相关的操作
+const detailRef = ref()
+const swipe = ref()
+const { scrollTop } = useScroll(detailRef)
+// 展示tabcontrol
+const showTabControl = computed(() => {
+  if(swipe.value) {
+    return scrollTop.value > swipe.value.$el.offsetHeight
+  }
+  return scrollTop.value >= 260
+})
+const sectionEls = ref({})
+const names = computed(() => {
+  return Object.keys(sectionEls.value)
+})
+// 函数模板引用
+const getSectionRef = (value) => {
+  if (!value) return
+  const name = value.$el.getAttribute("name")
+  sectionEls.value[name] = value.$el
+}
+
+let isClick = false
+let currentDistance = -1
+// 点击顶部item，滑动到对应高度  44是tabcontrol的高度
+const tabClick = (index) => {
+  const key = Object.keys(sectionEls.value)[index]
+  const el = sectionEls.value[key]
+  let distance = el.offsetTop
+  distance = distance - 44
+
+  isClick = true
+  currentDistance = distance
+
+  detailRef.value.scrollTo({
+    top: distance,
+    behavior: "smooth"
+  })
+}
+
+// 页面滚动, 滚动时匹配对应的tabControl的index
+const tabControlRef = ref()
+watch(scrollTop, (newValue) => {
+  if (newValue === currentDistance) {
+    isClick = false
+  }
+  if (isClick) return
+
+  // 1.获取所有的区域的offsetTops
+  const els = Object.values(sectionEls.value)
+  const values = els.map(el => el.offsetTop)
+
+  // 2.根据newValue去匹配想要索引
+  let index = values.length - 1
+  index = values.findIndex( item =>  item > newValue + 44) - 1
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] > newValue + 44) {
+  //     index = i - 1
+  //     break
+  //   }
+  // }
+  // console.log(index)
+  tabControlRef.value?.setCurrentIndex(index)
+})
 
 </script>
 
 <template>
-  <div class="top-page detail">
+  <div class="top-page detail" ref="detailRef">
+    <tab-control
+      v-if="showTabControl"
+      class="tabs"
+      :titles="names"
+      @tabItemClick="tabClick"
+      ref="tabControlRef"
+    />
     <van-nav-bar 
       title="房屋详情"
       left-text="旅途"
@@ -40,7 +113,7 @@ getDetailInfos({ houseId }).then((res) => {
       @click="onClickLeft"
     />
     <div class="main" v-if="mainPart" v-memo="[mainPart]">
-      <detail-swipe :swipe-data="mainPart.topModule.housePicture.housePics"/>
+      <detail-swipe :swipe-data="mainPart.topModule.housePicture.housePics" ref="swipe"/>
 
       <detail-infos name="描述" :ref="getSectionRef" :top-infos="mainPart.topModule" />
 
@@ -55,11 +128,10 @@ getDetailInfos({ houseId }).then((res) => {
       <detail-map name="周边" :ref="getSectionRef" :position="mainPart.dynamicModule.positionModule"/>
 
       <detail-intro :price-intro="mainPart.introductionModule"/>
-
-      <div class="footer">
-        <img src="@/assets/img/detail/icon_ensure.png" alt="">
-        <div class="text">无忧旅途, 永无止境!</div>
-      </div>
+    </div>
+    <div class="footer">
+      <img src="@/assets/img/detail/icon_ensure.png" alt="">
+      <div class="text">无忧旅途, 永无止境!</div>
     </div>
   </div>
 </template>
@@ -69,7 +141,13 @@ getDetailInfos({ houseId }).then((res) => {
   // --van-nav-bar-text-color: var(--primary-color);
   // --van-nav-bar-icon-color: var(--primary-color);
 // }
-
+.tabs{
+  position: fixed;
+  z-index: 9;
+  top: 0;
+  left: 0;
+  right: 0;
+}
 .footer {
   display: flex;
   flex-direction: column;

@@ -77,12 +77,14 @@ defineProps({
       }
 
       .name {
+        padding: 0 2px;
         margin-top: 8px;
         font-size: 16px;
         font-weight: 600;
       }
 
       .tags {
+        padding: 0 2px;
         display: flex;
         margin-top: 5px;
         font-size: 12px;

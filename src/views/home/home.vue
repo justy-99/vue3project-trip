@@ -1,5 +1,5 @@
 <script setup>
-import { watch, computed } from 'vue';
+import { watch, computed, ref } from 'vue';
 // components
 import HomeNavBar from './cpns/home-nav-bar.vue'
 import HomeSearchBox from './cpns/home-search-box.vue'
@@ -16,9 +16,9 @@ homeStore.fetchHotSuggestData()
 homeStore.fetchCategoriesData()
 homeStore.fetchHouselistData()
 
-
-const { isReachBottom, scrollTop } = useScroll()
-
+// 监听滚动到底部
+const homeRef = ref()
+const { isReachBottom, scrollTop } = useScroll(homeRef)
 watch( isReachBottom, (newValue) => {
   if(newValue) {
     // 到达底部后请求新数据并且重置标识
@@ -35,7 +35,7 @@ const isShowSearchBar = computed(() => {
 </script>
 
 <template>
-  <div class="home">
+  <div class="home" ref="homeRef">
     <home-nav-bar />
     <div class="banner">
       <img src="@/assets/img/home/banner.webp" alt="">
@@ -51,6 +51,9 @@ const isShowSearchBar = computed(() => {
 
 <style lang="less" scoped>
 .home {
+  height: 100vh;
+  overflow-x: auto;
+  box-sizing: border-box;
   padding-bottom: 60px;
 }
 .banner {
