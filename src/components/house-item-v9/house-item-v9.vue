@@ -1,3 +1,19 @@
+<script setup>
+import { computed } from '@vue/reactivity';
+
+const props = defineProps({
+  itemData: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const itemScore = computed(() => {
+  return Number(props.itemData.commentScore)
+})
+
+</script>
+
 <template>
   <div class="house-item">
     <div class="item-inner">
@@ -15,23 +31,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { computed } from '@vue/reactivity';
-
-
-const props = defineProps({
-  itemData: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-const itemScore = computed(() => {
-  return Number(props.itemData.commentScore)
-})
-
-</script>
 
 <style lang="less" scoped>
 .house-item {

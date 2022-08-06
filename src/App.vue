@@ -10,10 +10,9 @@ const route = useRoute()
 <template>
   <div class="app">
     <router-view v-slot="{ Component, route }">
-      <keep-alive>
+      <keep-alive include="home">
         <component
           :is="Component"
-          :key="route.meta.usePathKey ? route.path : undefined"
         />
       </keep-alive>
     </router-view>

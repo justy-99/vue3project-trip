@@ -5,7 +5,6 @@ import { storeToRefs } from 'pinia';
 import useCityStore from '@/stores/modules/city';
 import cityGroup from './cpns/city-group.vue';
 
-
 const router = useRouter()
 
 // 搜索框

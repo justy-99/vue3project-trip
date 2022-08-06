@@ -1,3 +1,14 @@
+<script setup>
+
+defineProps({
+  itemData: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+</script>
+
 <template>
   <div class="house-item">
     <div class="item-inner">
@@ -22,17 +33,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-defineProps({
-  itemData: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-</script>
 
 <style lang="less" scoped>
 .house-item {
