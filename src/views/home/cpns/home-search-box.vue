@@ -7,7 +7,7 @@ import useCityStore from '@/stores/modules/city';
 import useHomeStore from '@/stores/modules/home'
 import useDate from '@/hooks/useDate'
 import { formatMonthDay } from '@/utils/format';
-import getLoaction from '@/utils/location'
+import getLoaction from '@/utils/qq_map'
 
 const router = useRouter()
 
