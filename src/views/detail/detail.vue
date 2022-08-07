@@ -82,6 +82,15 @@ watch(scrollTop, (newValue) => {
   //第一项默认选中
   if(index < 0) index = 0   
   tabControlRef.value?.setCurrentIndex(index)
+
+  //2法二：默认值最后一项，匹配不到就不需要再从-2改
+  // let index = values.length - 1
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] > newValue + 44) {
+  //     index = i - 1
+  //     break
+  //   }
+  // }
 })
 
 </script>
