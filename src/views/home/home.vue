@@ -1,5 +1,8 @@
+<script>
+  export default { name: "home" }
+</script>
 <script setup>
-import { watch, computed, ref } from 'vue';
+import { watch, computed, ref, onActivated } from 'vue';
 // components
 import HomeNavBar from './cpns/home-nav-bar.vue'
 import HomeSearchBox from './cpns/home-search-box.vue'
@@ -18,6 +21,7 @@ homeStore.fetchHouselistData()
 
 // 监听滚动到底部
 const homeRef = ref()
+// 这里不监听homeRef的话，window在每次页面跳转都会触发一次到达底部
 const { isReachBottom, scrollTop } = useScroll(homeRef)
 watch( isReachBottom, (newValue) => {
   if(newValue) {
@@ -30,6 +34,12 @@ watch( isReachBottom, (newValue) => {
 
 const isShowSearchBar = computed(() => {
   return scrollTop.value >= 480
+})
+
+onActivated(() => {
+  homeRef.value.scrollTo({
+    top: scrollTop.value
+  })
 })
 
 </script>
