@@ -35,7 +35,7 @@ const detailRef = ref()
 const { scrollTop,isEndScroll } = useScroll(detailRef)
 // 展示tabcontrol  tabcontrol和navbar的高度差为2(当前)
 const showTabControl = computed(() => {
-  return scrollTop.value >= topValues.value[0] - 44
+  return scrollTop.value >= topValues.value[0] - tabControlHeight.value
 })
 // 存放各个组件映射
 const sectionEls = ref({})
@@ -51,11 +51,12 @@ const getSectionRef = (value) => {
 }
 let isClick = false //记录处于点击滚动状态
 const tabControlRef = ref()
+const tabControlHeight = ref()
 // 点击顶部item，滑动到对应高度  44是tabcontrol的高度 5是上边框高度
 const tabClick = (index) => {
   const key = Object.keys(sectionEls.value)[index]
   const el = sectionEls.value[key]
-  let distance = el.offsetTop - 44 + 5
+  let distance = el.offsetTop - tabControlHeight.value + 5
   
   isClick = true
   tabControlRef.value?.setCurrentIndex(index)
@@ -79,6 +80,8 @@ watch(scrollTop, (newValue) => {
   // 1.获取所有的区域的offsetTops
   const els = Object.values(sectionEls.value)
   topValues.value = els.map(el => el.offsetTop)
+  tabControlHeight.value = tabControlRef.value?.$el.clientHeight
+  
   // 点击触发滚动则不匹配
   if(isClick) return
   findCurrent(newValue)
@@ -87,7 +90,7 @@ watch(scrollTop, (newValue) => {
 const findCurrent = (newValue) => {
   let index = topValues.value.length - 1
   for (let i = 0; i < topValues.value.length; i++) {
-    if (topValues.value[i] > newValue + 44) {
+    if (topValues.value[i] > newValue + tabControlHeight.value) {
       index = i - 1
       break
     }
@@ -111,7 +114,7 @@ const findCurrent = (newValue) => {
 <template>
   <div class="top-page detail" ref="detailRef">
     <tab-control
-      v-if="showTabControl"
+      :style="{'z-index': (showTabControl ? 10 : 0)}"
       class="tabs"
       :titles="names"
       @tabItemClick="tabClick"
