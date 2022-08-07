@@ -37,7 +37,7 @@ const isShowSearchBar = computed(() => {
 })
 
 onActivated(() => {
-  homeRef.value.scrollTo({
+  homeRef.value?.scrollTo({
     top: scrollTop.value
   })
 })
