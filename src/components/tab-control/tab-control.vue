@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 //如使用 <script setup> 需要通过 defineExpose({}) 宏显式暴露
   export default {
     props: {
@@ -23,6 +23,32 @@
       }
     }
   }
+</script> -->
+<script setup>
+import { ref } from 'vue'
+
+defineProps({
+  titles: {
+    type: Array,
+    default: () => []
+  }
+})
+const emits = defineEmits(['tabItemClick'])
+
+const currentIndex = ref(0)
+
+const itemClick = (index) => {
+  emits('tabItemClick',index)
+}
+
+const setCurrentIndex = (index) => {
+  currentIndex.value = index
+}
+
+defineExpose({
+  itemClick,
+  setCurrentIndex
+})
 </script>
 
 <template>

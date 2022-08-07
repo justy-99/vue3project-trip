@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 // components
 import TabControl from "@/components/tab-control/tab-control.vue"
@@ -32,66 +32,79 @@ getDetailInfos({ houseId }).then((res) => {
 
 // tabControl相关的操作
 const detailRef = ref()
-const swipe = ref()
-const { scrollTop } = useScroll(detailRef,10)
+const { scrollTop,isEndScroll } = useScroll(detailRef)
 // 展示tabcontrol  tabcontrol和navbar的高度差为2(当前)
 const showTabControl = computed(() => {
-  if(swipe.value && swipe.value.$el.offsetHeight > 0) {
-    return scrollTop.value > (swipe.value.$el.offsetHeight + 2)
-  }
-  return scrollTop.value >= 254
+  return scrollTop.value >= topValues.value[0] - 44
 })
 // 存放各个组件映射
 const sectionEls = ref({})
 const names = computed(() => {
   return Object.keys(sectionEls.value)
 })
-// 为sectionEls赋值 （函数模板引用 加载和卸载都会执行）
+const topValues = ref([])  //每个组件的offsetTop
+// 为sectionEls赋值 （函数模板引用 挂载和卸载都会执行）
 const getSectionRef = (value) => {
   if (!value) return
   const name = value.$el.getAttribute("name")
   sectionEls.value[name] = value.$el
 }
-
+let isClick = false //记录处于点击滚动状态
+const tabControlRef = ref()
 // 点击顶部item，滑动到对应高度  44是tabcontrol的高度 5是上边框高度
 const tabClick = (index) => {
   const key = Object.keys(sectionEls.value)[index]
   const el = sectionEls.value[key]
   let distance = el.offsetTop - 44 + 5
   
+  isClick = true
+  tabControlRef.value?.setCurrentIndex(index)
+
   detailRef.value.scrollTo({
     top: distance,
     behavior: "smooth"
   })
 }
-
+// 滚动结束重置isClick状态
+watch(isEndScroll, (newValue) => {
+  if(newValue) {
+    isClick = false
+    scrollTop.value = detailRef.value?.scrollTop
+    findCurrent(scrollTop.value)
+    isEndScroll.value = false
+  }
+})
 // 页面滚动, 滚动时匹配对应的tabControl的index
-const tabControlRef = ref()
 watch(scrollTop, (newValue) => {
   // 1.获取所有的区域的offsetTops
   const els = Object.values(sectionEls.value)
-  const values = els.map(el => el.offsetTop)
-
-  // 2.根据newValue去匹配想要索引
-  let index = 0
-  // 从前往后查找，newval需要小于目标item的最底部，
-  // 匹配到的都是选中的往后一项，需要索引减一
-  index = values.findIndex( item => newValue <= (item - 44)) - 1
-  //最后一项没有后一项，会未匹配到，就是 -1 -1为-2
-  if(index === -2) index = values.length-1 
-  //第一项默认选中
-  if(index < 0) index = 0   
-  tabControlRef.value?.setCurrentIndex(index)
-
-  //2法二：默认值最后一项，匹配不到就不需要再从-2改
-  // let index = values.length - 1
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] > newValue + 44) {
-  //     index = i - 1
-  //     break
-  //   }
-  // }
+  topValues.value = els.map(el => el.offsetTop)
+  // 点击触发滚动则不匹配
+  if(isClick) return
+  findCurrent(newValue)
 })
+// 设置选中tab
+const findCurrent = (newValue) => {
+  let index = topValues.value.length - 1
+  for (let i = 0; i < topValues.value.length; i++) {
+    if (topValues.value[i] > newValue + 44) {
+      index = i - 1
+      break
+    }
+  } 
+  tabControlRef.value?.setCurrentIndex(index)
+  
+  // // 思路二：根据newValue去匹配想要索引
+  // let index = 0
+  // // 从前往后查找，newval需要小于目标item的最底部，
+  // // 匹配到的都是选中的往后一项，需要索引减一
+  // index = values.findIndex( item => newValue <= (item - 44)) - 1
+  // //最后一项没有后一项，会未匹配到，就是 -1 -1为-2
+  // if(index === -2) index = values.length-1 
+  // //第一项默认选中
+  // if(index < 0) index = 0   
+  // tabControlRef.value?.setCurrentIndex(index)
+}
 
 </script>
 
@@ -111,7 +124,7 @@ watch(scrollTop, (newValue) => {
       @click="onClickLeft"
     />
     <div class="main" v-if="mainPart" v-memo="[mainPart]">
-      <detail-swipe :swipe-data="mainPart.topModule.housePicture.housePics" ref="swipe"/>
+      <detail-swipe :swipe-data="mainPart.topModule.housePicture.housePics"/>
 
       <detail-infos name="描述" :ref="getSectionRef" :top-infos="mainPart.topModule" />
 
