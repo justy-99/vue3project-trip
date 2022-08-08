@@ -33,16 +33,14 @@ getDetailInfos({ houseId }).then((res) => {
 // tabControl相关的操作
 const detailRef = ref()
 const { scrollTop,isEndScroll } = useScroll(detailRef)
-// 展示tabcontrol  tabcontrol和navbar的高度差为2(当前)
-const showTabControl = computed(() => {
-  return scrollTop.value >= topValues.value[0] - tabControlHeight.value
-})
+
 // 存放各个组件映射
 const sectionEls = ref({})
 const names = computed(() => {
   return Object.keys(sectionEls.value)
 })
-const topValues = ref([])  //每个组件的offsetTop
+//每个组件的offsetTop
+const topValues = ref([])
 // 为sectionEls赋值 （函数模板引用 挂载和卸载都会执行）
 const getSectionRef = (value) => {
   if (!value) return
@@ -50,23 +48,25 @@ const getSectionRef = (value) => {
   sectionEls.value[name] = value.$el
 }
 let isClick = false //记录处于点击滚动状态
-const tabControlRef = ref()
-const tabControlHeight = ref()
-// 点击顶部item，滑动到对应高度  44是tabcontrol的高度 5是上边框高度
+const tabControlRef = ref()  //tabControl引用
+const tabControlHeight = ref()  //tabControl的DOM元素高度
+// 点击顶部item，滑动到对应高度  5是section上边框高度
 const tabClick = (index) => {
+  // 先匹配对应组件
   const key = Object.keys(sectionEls.value)[index]
   const el = sectionEls.value[key]
+  // 计算需要滚动至什么位置
   let distance = el.offsetTop - tabControlHeight.value + 5
-  
+  //记录处于点击状态，设置选中样式
   isClick = true
   tabControlRef.value?.setCurrentIndex(index)
-
+  //滚动至点击位置
   detailRef.value.scrollTo({
     top: distance,
     behavior: "smooth"
   })
 }
-// 滚动结束重置isClick状态
+// 监听是否滚动结束，重置isClick状态
 watch(isEndScroll, (newValue) => {
   if(newValue) {
     isClick = false
@@ -75,18 +75,26 @@ watch(isEndScroll, (newValue) => {
     isEndScroll.value = false
   }
 })
-// 页面滚动, 滚动时匹配对应的tabControl的index
+// 是否展示tabcontrol
+const showTabControl = ref(false)
+// 监听页面滚动, 滚动时匹配对应的tabControl的index
 watch(scrollTop, (newValue) => {
+  // 点击触发滚动则不匹配
+  if(isClick) return
   // 1.获取所有的区域的offsetTops
   const els = Object.values(sectionEls.value)
   topValues.value = els.map(el => el.offsetTop)
+  // 动态获取tabControl的DOM元素高度
   tabControlHeight.value = tabControlRef.value?.$el.clientHeight
-  
-  // 点击触发滚动则不匹配
-  if(isClick) return
+  // 是否展示tabcontrol
+  if (newValue >= topValues.value[0] - tabControlHeight.value) {
+    showTabControl.value = true
+  } else {
+    showTabControl.value = false
+  }
   findCurrent(newValue)
 })
-// 设置选中tab
+// 设置选中tab样式
 const findCurrent = (newValue) => {
   let index = topValues.value.length - 1
   for (let i = 0; i < topValues.value.length; i++) {
