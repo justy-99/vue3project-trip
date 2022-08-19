@@ -74,7 +74,8 @@ defineProps({
     .item {
       font-size: 12px;
       margin: 2px 2px;
-      padding: 1px 3px;
+      padding: 2px 3px;
+      border-radius: 4px;
     }
   }
 
